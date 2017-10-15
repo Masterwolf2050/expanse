@@ -11,7 +11,7 @@
 #include <curses.h>
 #include <unistd.h>
 #include <string.h>
-#include <signal.h>
+#include <menu.h>
 
 
 //Declerations
@@ -22,9 +22,14 @@
 
 // Clean up escape key codes so that they work correctly.
 char kb_cleanup(char);
-// Ignore SIGINT, ctrl-c won't close the pogram...
-void signalHandler(int signum);
-
+// Place menu options correctly on the screen and don't
+// display options that go beyond the vertical edges
+// Options may be no more than 30 characters long
+// Must be counted 1..10
+// Must contin a shortcut remembering that it may only require two keys
+// Shortcuts go in instructions & help files not on the main interface
+// This will be removed if the menu library does it's job
+void CenterLeftJustify(int sHeight, int sWidth, int totalOptions, char *option[]);
 
 int curses_main()
 {
@@ -37,6 +42,7 @@ int curses_main()
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &crs_winSz);
 
 	initscr();
+	raw();
 	timeout(0);
 	//keypad(stdscr, TRUE);
 	mousemask(ALL_MOUSE_EVENTS, NULL);
@@ -47,11 +53,11 @@ int curses_main()
 	while(kb_press != 27)
 	{
 		//Remember mvprintw and other mv functions in curses are always written (columns, rows) or (y,x)
-		mvprintw((crs_winSz.ws_row/2),((crs_winSz.ws_col/2)-(strlen("Press escape to leave!")/2)), "Press escape to leave!");
+		mvprintw((crs_winSz.ws_row-2),2, "Press escape to leave!");
 		//mvprintw(1,1,"%c",kb_press);
 		refresh();
 		kb_press = kb_cleanup(getch());
-		signal(SIGINT, signalHandler);
+//		signal(SIGINT, signalHandler);
 
 	}
 	endwin();
@@ -70,15 +76,7 @@ char kb_cleanup(char key)
 	return 0;
 }
 
-void signalHandler(int signum)
+void CenterLeftJustify(int sHeight, int sWidth, int totalOptions, char *option[])
 {
-	switch(signum) {
-		case 2 :
-			mvprintw(1,1, "You may not exit this way! Press any key!\n");
-			getch();
-			break;
-		default :
-			mvprintw(1,1, "Unknown interupt! Press any key!\n");
-			getch();
-		}
+	
 }
