@@ -41,9 +41,11 @@ int main(int argc, char **argv)
 				break;
 			case 'r': /* Set the resolution */
 				printf("This is not yet implemented\n");
+				return 0;
 				break;
 			case 'h':
 				printf("/nExpanse -R <option>\n\n-c, --curses\n\tSelect Curses mode\n\n-h --help\n\tHelp and general tips\n");
+				return 0;
 				break;
 			default:
 				break;
